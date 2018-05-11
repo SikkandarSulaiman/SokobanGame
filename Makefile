@@ -24,3 +24,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	rm -f $(BIN_DIR)/$(BIN_FILE_NAME)
 	rm -f $(ofiles)
+	rm -f display/display_ncurs
+
+display:
+	gcc display/*.c -o display/display_ncurs -I include/ -lncurses

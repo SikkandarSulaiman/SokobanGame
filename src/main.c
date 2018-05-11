@@ -23,29 +23,19 @@ int main(void)
 		[OUTPUT_END] = respond
 	};
 
+	data.game_status = 0;
 	redirect_index = INPUT_END;
 
 	while (1) {
-
-<<<<<<< HEAD
-		/* printf("error %X from %d\n", data.err, redirect_index); */
-		if (redirect_index == INPUT_END)
-			data.err = CLEAR;
-		
-		blocks[redirect_index](&data, &redirect_index);
-=======
 		if (redirect_index == INPUT_END)
 			data.err = CLEAR;
 
 		ret = blocks[redirect_index](&data, &redirect_index);
-		if (ret == FAILURE) {
+		if (ret == FAILURE)
 			printf("Fatal Error\n");
-		}
->>>>>>> sikandar
 
 		if (redirect_index == QUIT_GAME)
 			break;
-		
 	}
 
 	return 0;

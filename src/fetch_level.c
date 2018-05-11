@@ -16,17 +16,17 @@
 #define END_OF_FILE -1
 #define QUIT_LEVEL -2
 
-static int get_level(FILE *level_file_fd, char level[][MAX_COLS], int *row_len)
+static int get_level(FILE *level_file_fd, char level[][MAX_COL], int *row_len)
 {
 	char str_buf[LINE_MAX];
 	char *retp;
 	int row_count = 0;
-	
+
 	while (1) {
 		retp = fgets(str_buf, LINE_MAX, level_file_fd);
 		if (retp == NULL) {
 			if (ferror(level_file_fd))
-				error(1, errno, "error getting data from stream");
+				error(1, errno, "error getting data from file");
 			else
 				return END_OF_FILE;
 		}
@@ -46,7 +46,7 @@ static int get_level(FILE *level_file_fd, char level[][MAX_COLS], int *row_len)
 
 }
 
-static int find_max_column(char level[][MAX_COLS], int row_len)
+static int find_max_column(char level[][MAX_COL], int row_len)
 {
 	int row;
 	int col_len;
@@ -61,7 +61,7 @@ static int find_max_column(char level[][MAX_COLS], int row_len)
 	return max_col;
 }
 
-static void append_space_to_board(char level[][MAX_COLS], int row_len)
+static void append_space_to_board(char level[][MAX_COL], int row_len)
 {
 	int row;
 	int col;
@@ -84,7 +84,7 @@ static void append_space_to_board(char level[][MAX_COLS], int row_len)
 static int set_level(FILE *level_file_fd, game_data_t *data)
 {
 	int ret;
-	
+
 	if (data->sys_cmd == S_START) {
 		ret = fseek(level_file_fd, 0, SEEK_SET);
 		if (ret == FAILURE)
@@ -95,7 +95,7 @@ static int set_level(FILE *level_file_fd, game_data_t *data)
 	if (data->sys_cmd == S_NEXT) {
 		ret = fseek(level_file_fd, data->next_level, SEEK_SET);
 		if (ret == FAILURE)
-			error(1, errno, "Error setting fseek next level");		
+			error(1, errno, "Error setting fseek next level");
 		data->current_level = data->next_level;
 	}
 
@@ -105,10 +105,10 @@ static int set_level(FILE *level_file_fd, game_data_t *data)
 			error(1, errno, "Error setting fseek reset");
 	}
 	return 0;
-		
+
 }
 
-int get_player_pos(char level[][MAX_COLS], int rows, int cols)
+int get_player_pos(char level[][MAX_COL], int rows, int cols)
 {
 	int i;
 	int j;
@@ -128,7 +128,7 @@ int get_player_pos(char level[][MAX_COLS], int rows, int cols)
 
 int get_board(game_data_t *data, int *redirect_key)
 {
-	char char_map[MAX_ROWS][MAX_COLS];
+	char char_map[MAX_ROW][MAX_COL];
 	FILE *level_file_fd;
 	int row_count;
 	int ret;
@@ -141,19 +141,19 @@ int get_board(game_data_t *data, int *redirect_key)
 		data->err = ERR_OPEN_LEVEL_FILE;
 		return FAILURE;
 	}
-	
+
 	ret = set_level(level_file_fd, data);
 
 	ret = get_level(level_file_fd, char_map, &row_count);
 
 	data->next_level = ftell(level_file_fd);
 	if (data->next_level == FAILURE)
- 		error(1, errno, "Error getting next level");
-  
+		error(1, errno, "Error getting next level");
+
 	if (ret == END_OF_FILE) {
 		printf("END OF GAME\n");
 		*redirect_key = OUTPUT_END;
-		data->err = ERR_GAME_FINISHED;		
+		data->err = ERR_GAME_FINISHED;
 		return FAILURE;
 	}
 	data->row_count = row_count;
@@ -168,7 +168,8 @@ int get_board(game_data_t *data, int *redirect_key)
 
 	data->col_count = strlen(char_map[0]);
 	chars_to_bits(char_map, data->level, data->row_count, data->col_count);
-	data->player_pos = get_player_pos(data->level, data->row_count, data->col_count);
+	data->player_pos = get_player_pos(data->level, data->row_count,
+		data->col_count);
 
 	ret = fclose(level_file_fd);
 	if (ret == FAILURE) {

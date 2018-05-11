@@ -14,7 +14,6 @@
 #include <bitfields_tr.h>
 #include <io_endpoint.h>
 
-
 int sock_fd;
 struct sockaddr_in client;
 socklen_t client_len = sizeof(client);
@@ -23,15 +22,16 @@ static int write_to_sck(char *buf, int size)
 {
 	int wlen;
 	int ret;
-	
-	wlen = sendto(sock_fd, buf, size, 0, (struct sockaddr *)&client, client_len);
+
+	wlen = sendto(sock_fd, buf, size, 0,
+		(struct sockaddr *)&client, client_len);
 	if (wlen == -1)
 		error(1, errno, "unable to respond");
 
 	ret = close(sock_fd);
 	if (ret == -1)
 		error(1, errno, "error closing socket");
-	
+
 	return SUCCESS;
 }
 
@@ -42,25 +42,34 @@ int respond(game_data_t *data, int *redirect_key)
 
 	d_out.err_flag = 0;
 	*redirect_key = INPUT_END;
-	
+
+	if (data->err != 0)
+		printf("Error: %x\n", data->err);
+
 	if (data->err) {
 		d_out.err_flag = 1;
 
 		if (data->err & ERR_INT) {
 			printf("Internal error\n");
 			if (data->err == ERR_GAME_FINISHED)
-				strcpy(d_out.err_msg, "END OF GAME");			
+				strcpy(d_out.err_msg, "END OF GAME");
 		} else if (data->err & ERR_IO) {
-			strcpy(d_out.err_msg, "Invalid Command");			
+			strcpy(d_out.err_msg, "Invalid Command");
 			printf("I/O error\n");
 		} else if (data->err & ERR_BOARD) {
 			printf("Error in map\n");
 		}
 	}
-	if (!(data->game_status & LEVEL_START)) {
+	if (!(data->game_status & LEVEL_START) && data->err != ERR_NO_GAME) {
 		d_out.err_flag = 1;
-			strcpy(d_out.err_msg, "Level Completed");
-			printf("Level Completed\n");
+		strcpy(d_out.err_msg, "Level Completed");
+		printf("Level Completed\n");
+	}
+
+	if (data->err == ERR_NO_GAME) {
+		d_out.err_flag = 1;
+		strcpy(d_out.err_msg, "Press Start Game");
+		printf("Invalid key pressed before Game start\n");
 	}
 
 	d_out.row_count = data->row_count;
@@ -68,7 +77,7 @@ int respond(game_data_t *data, int *redirect_key)
 	bits_to_chars(d_out.level, data->level, data->row_count, data->col_count);
 
 	for (i = 0; i < data->row_count; i++) {
-		d_out.level[i][data->col_count] = 0 ;
+		d_out.level[i][data->col_count] = 0;
 		printf("%s\n", d_out.level[i]);
 	}
 
@@ -78,13 +87,13 @@ int respond(game_data_t *data, int *redirect_key)
 	};
 
 	union ser s;
+
 	s.data = d_out;
 
 	write_to_sck(s.buf, sizeof(out_data_t));
-	
+
 	return SUCCESS;
 }
-
 
 static int read_from_sck(char *buf, int size)
 {
@@ -99,10 +108,10 @@ static int read_from_sck(char *buf, int size)
 		error(1, errno, "unable to create socket");
 
 	ret = setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,
-					 &optval, sizeof(optval));
+			 &optval, sizeof(optval));
 	if (ret == -1)
 		error(1, errno, "unable to configure socket");
-	
+
 	me.sin_family = AF_INET;
 	me.sin_port = htons(SERVER_PORT);
 	me.sin_addr.s_addr = inet_addr(SERVER_IP);
@@ -111,22 +120,24 @@ static int read_from_sck(char *buf, int size)
 	if (ret == -1)
 		error(1, errno, "unable to bind socket to host");
 
-	rlen = recvfrom(sock_fd, buf, sizeof(buf), 0, (struct sockaddr *)&client, &client_len);
+	rlen = recvfrom(sock_fd, buf, sizeof(buf), 0,
+		(struct sockaddr *)&client, &client_len);
 	if (rlen == -1)
 		error(1, errno, "unable to receive from client");
 	buf[rlen] = 0;
 
-	printf("Msg from %s: %s\n %d\n", inet_ntoa(client.sin_addr), buf, client_len);
-	
+/*	printf("Msg from %s: %s\n %d\n",
+		inet_ntoa(client.sin_addr), buf, client_len);
+*/
 	return SUCCESS;
 }
 
 int get_user_cmd(game_data_t *data, int *redirect_key)
 {
 	int ret;
-	
+
 	ret = read_from_sck(data->user_cmd, sizeof(data->user_cmd));
-	
+
 	if (ret == FAILURE) {
 		*redirect_key = OUTPUT_END;
 		return SUCCESS;
@@ -135,4 +146,3 @@ int get_user_cmd(game_data_t *data, int *redirect_key)
 	*redirect_key = INPUT_PROCESS;
 	return SUCCESS;
 }
-

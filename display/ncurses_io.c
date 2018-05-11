@@ -1,12 +1,7 @@
 #include <ncurses.h>
 #include <string.h>
 #include <ncurses_io.h>
-<<<<<<< HEAD
-#include <game_data.h>
-#include <user_game_cmds.h>
-=======
 #include <sokoban.h>
->>>>>>> sikandar
 
 #define WALL_COLOR 1
 #define PLAYER_COLOR 2
@@ -21,22 +16,17 @@
 #define R_C 3
 #define STRING -1
 
-#define HEIGHT 5
-#define WIDTH 30
-
-#define R_C 3
-
-static void init_ncurses()
+static void init_ncurses(void)
 {
 	initscr();
 	clear();
 	raw();
 	noecho();
 	keypad(stdscr, TRUE);
-	box(stdscr, '#' , '#');
+	box(stdscr, '#', '#');
 }
 
-static void define_color_pair()
+static void define_color_pair(void)
 {
 	start_color();
 
@@ -73,102 +63,7 @@ static int find_color(char element, int *color)
 	return 0;
 }
 
-<<<<<<< HEAD
-int print_ui(char data, int startx, int starty)
-{
-	char wall[][R_C] = {"###",
-			    "# #",
-			    "###"};
-
-	char player[][R_C] = {" O ",
-			      "/|\\",
-			      "/ \\"};
-
-	char box[][R_C] = {"---",
-			   "| |",
-			   "---"};
-
-	char target[][R_C] = {"   ",
-			      " X ",
-			      "   "};
-
-	char placed[][R_C] = {"---",
-			      "|X|",
-			      "---"};
-
-	char p_on_t[][R_C] = {" O ",
-			      "/X\\",
-			      "/ \\"};
-
-	int row;
-	int col;
- 	int i = 0;
-	int j = 0;
-
-	switch (data) {
-	case CHAR_WALL:
-		for (row = startx; row < startx + 3; row++) {
-			for (col = starty; col < starty + 3; col++)
-				mvprintw(row, col, "%c", wall[i][j++]);
-			i++;
-			j = 0;
-		}
-		break;
-
-	case CHAR_PLAYER:
-		for (row = startx; row < startx + 3; row++) {
-			for (col = starty; col < starty + 3; col++)
-				mvprintw(row, col, "%c", player[i][j++]);
-			i++;
-			j = 0;
-		}
-		break;
-	case CHAR_BOX:
-		for (row = startx; row < startx + 3; row++) {
-			for (col = starty; col < starty + 3; col++)
-				mvprintw(row, col, "%c", box[i][j++]);
-			i++;
-			j = 0;
-		}
-		break;
-	case CHAR_TARGET:
-		for (row = startx; row < startx + 3; row++) {
-			for (col = starty; col < starty + 3; col++)
-				mvprintw(row, col, "%c", target[i][j++]);
-			i++;
-			j = 0;
-		}
-		break;
-	case CHAR_PLACED:
-		for (row = startx; row < startx + 3; row++) {
-			for (col = starty; col < starty + 3; col++)
-				mvprintw(row, col, "%c", placed[i][j++]);
-			i++;
-			j = 0;
-		}
-		break;
-	case CHAR_P_ON_T:
-		for (row = startx; row < startx + 3; row++) {
-			for (col = starty; col < starty + 3; col++)
-				mvprintw(row, col, "%c", p_on_t[i][j++]);
-			i++;
-			j = 0;
-		}
-		break;
-
-	default:
-		for (row = startx; row < startx + 3; row++) {
-			for (col = starty; col < starty + 3; col++)
-				mvprintw(row, col, "%c", data);
-		}
-	}
-	return 0;
-}
-
-static int print_data(char board[][MAX_COLS], int row_len)
-=======
 int print_ui(char ui_data[][R_C], int startx, int starty)
->>>>>>> sikandar
 {
 	int row = 0;
 	int col = 0;
@@ -213,10 +108,6 @@ int create_ui(char data, int startx, int starty)
 	int row = 0;
 	int col = 0;
 	int color;
-<<<<<<< HEAD
-	int start_row = 1;
-	int start_col = 1;
-=======
 
 	find_color(data, &color);
 	attron(A_BOLD | COLOR_PAIR(color));
@@ -253,18 +144,18 @@ int create_ui(char data, int startx, int starty)
 	return 0;
 }
 
-static void print_manual()
+static void print_manual(void)
 {
 	int height;
 	int width;
 	int start_x;
 	int row;
 
-	char option[][20] = {"RESTART GAME -> F2",
+	char menu_option[][20] = {"RESTART GAME -> F2",
 			     "NEXT_LEVEL   -> F3",
 			     "RESET_LEVEL  -> F4",
 			     "QUIT_GAME    -> ESC"};
-	char movement_key[][30] = {"MOVE UP  -> UP_ARROW",
+	char key_data[][30] = {"MOVE UP  -> UP_ARROW",
 				   "MOVE DOWN -> DOWN_ARROW",
 				   "MOVE RIGHT -> RIGHT_ARROW",
 				   "MOVE LEFT -> LEFT_ARROW"};
@@ -273,19 +164,19 @@ static void print_manual()
 
 	start_x = 1;
 	for (row = 0; row < 4; row++)
-		mvprintw(start_x++, 2, "%s\n", option[row]);
+		mvprintw(start_x++, 2, "%s\n", menu_option[row]);
 
 	start_x = height - 5;
 	for (row = 0; row < 4; row++)
-		mvprintw(start_x++, width - strlen(movement_key[row]) - 5, "%s\n", movement_key[row]);
+		mvprintw(start_x++, width - strlen(key_data[row]) - 5, "%s\n",
+			key_data[row]);
 
 }
 
-int print_string(char str_data[][MAX_COLS], int  row_len)
+int print_string(char str_data[][MAX_COL], int  row_len)
 {
 	int start_row;
 	int start_col;
->>>>>>> sikandar
 	int height;
 	int width;
 	int row;
@@ -295,34 +186,17 @@ int print_string(char str_data[][MAX_COLS], int  row_len)
 	attron(A_BOLD | COLOR_PAIR(OTHER_COLOR));
 	print_manual();
 	getmaxyx(stdscr, height, width);
-
-	start_row = (height / 2) - (row_len * 3 / 2);
+	start_row = (height / 2) - (row_len / 2);
 
 	for (row = 0; row < row_len; row++) {
-		start_col = (width - col_len * 3) / 2;
+		start_col = (width - col_len) / 2;
 
-<<<<<<< HEAD
-		for (col = 0; col < col_len; col++) {
-			find_color(board[row][col], &color);
-			attron(A_BOLD | COLOR_PAIR(color));
-
-			/* mvprintw(start_row, start_col++, "%c", board[row][col]); */
-			print_ui(board[row][col], start_row, start_col);
-			start_col = start_col + 3;
-
-			attroff(A_BOLD | COLOR_PAIR(color));
-		}
-
-=======
 		for (col = 0; col < col_len; col++)
-			mvprintw(start_row, start_col++, "%c", str_data[row][col]);
+			mvprintw(start_row, start_col++, "%c",
+				str_data[row][col]);
 
->>>>>>> sikandar
 		printw("\n");
-		start_row = start_row + 3;
-		start_col = 1;
-
-		/* start_row++; */
+		start_row++;
 	}
 
 	attron(A_BOLD | COLOR_PAIR(OTHER_COLOR));
@@ -330,11 +204,11 @@ int print_string(char str_data[][MAX_COLS], int  row_len)
 	return 0;
 }
 
-static int print_data(char level[][MAX_COLS], int row_len)
+static int print_data(char board[][MAX_COL], int row_len)
 {
 	int row;
 	int col;
-	int col_len = strlen(level[0]);
+	int col_len = strlen(board[0]);
 	int color;
 	int start_row = 1;
 	int start_col = 1;
@@ -343,36 +217,16 @@ static int print_data(char level[][MAX_COLS], int row_len)
 	int ret;
 	int flag = 1;
 
-<<<<<<< HEAD
-	char option[][20] = {"NEXT_LEVEL  -> F3",
-			     "RESET_LEVEL -> F4",
-			     "QUIT_GAME   -> ESC"};
-	char movement_key[][30] = {"MOVE UP    -> UP_ARROW",
-				   "MOVE DOWN  -> DOWN_ARROW",
-				   "MOVE RIGHT -> RIGHT_ARROW",
-				   "MOVE LEFT  -> LEFT_ARROW"};
-
-	getmaxyx(stdscr, height, width);
-
-	start_x = 1;
-	for (row = 0; row < 3; row++)
-		mvprintw(start_x++, 3, "%s\n", option[row]);
-
-	start_x = height - 8;
-	for (row = 0; row < 4; row++)
-		mvprintw(start_x++, (width - strlen(movement_key[row])) / 2, "%s\n", movement_key[row]);
-=======
 	getmaxyx(stdscr, height, width);
 
 	start_row = (height / 2) - (row_len * 3 / 2);
->>>>>>> sikandar
 
 	for (row = 0; row < row_len && flag == 1; row++) {
 		start_col = (width - col_len * 3) / 2;
 		for (col = 0; col < col_len; col++) {
-			ret = create_ui(level[row][col], start_row, start_col);
+			ret = create_ui(board[row][col], start_row, start_col);
 			if (ret == STRING) {
-				print_string(level, row_len);
+				print_string(board, row_len);
 				flag = 0;
 				break;
 			}
@@ -386,9 +240,8 @@ static int print_data(char level[][MAX_COLS], int row_len)
 	return 0;
 }
 
-int display_ncurses(char level[][MAX_COLS], int row_len)
+int display_ncurses(char board[][MAX_COL], int row_len)
 {
-	endwin();
 	init_ncurses();
 	if (has_colors() == FALSE) {
 		endwin();
@@ -396,12 +249,7 @@ int display_ncurses(char level[][MAX_COLS], int row_len)
 		return 1;
 	}
 	define_color_pair();
-<<<<<<< HEAD
 	print_data(board, row_len);
-	/* print_manual(); */
-=======
-	print_data(level, row_len);
->>>>>>> sikandar
 	refresh();
 
 	return SUCCESS;
@@ -415,11 +263,8 @@ int print_user_msg(char *user_msg)
 	int height;
 	int width;
 
-<<<<<<< HEAD
-=======
 	print_manual();
 
->>>>>>> sikandar
 	getmaxyx(stdscr, height, width);
 
 	starty = (height - HEIGHT) / 2;
@@ -436,10 +281,6 @@ int print_user_msg(char *user_msg)
 
 	mvwprintw(game_win, startx, starty, "%s\n", user_msg);
 	wrefresh(game_win);
-<<<<<<< HEAD
-	/* getch(); */
-=======
->>>>>>> sikandar
 	delwin(game_win);
 
 	return 0;
@@ -478,11 +319,7 @@ int get_input_ncurses(char *str_input)
 	default:
 		sprintf(str_input, "%d", user_input);
 	}
-<<<<<<< HEAD
-	/* endwin(); */
-=======
 	endwin();
->>>>>>> sikandar
 
 	return SUCCESS;
 }

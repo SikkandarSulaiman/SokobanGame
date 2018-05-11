@@ -9,7 +9,7 @@
 /*
  *Prints Board
  */
-int print_board(char [][MAX_COLS], int);
+int print_board(char [][MAX_COL], int);
 
 /*
  *Get Levels in Board

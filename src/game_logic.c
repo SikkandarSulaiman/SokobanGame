@@ -12,8 +12,8 @@
 #define SET_BIT(mask, bit) (mask |= bit)
 #define CLEAR_BIT(mask, bit) (mask &= ~(bit))
 
- 
-static int move(char level[][MAX_COLS], int *x, int *y, int sys_cmd)
+
+static int move(char level[][MAX_COL], int *x, int *y, int sys_cmd)
 {
 	int s1_x = *x;
 	int s1_y = *y;
@@ -44,14 +44,16 @@ static int move(char level[][MAX_COLS], int *x, int *y, int sys_cmd)
 	if (level[s1_x][s1_y] & BIT_WALL) {
 		return FAILURE;
 	} else if (level[s1_x][s1_y] & BIT_BOX) {
-		if ((level[s2_x][s2_y] & BIT_WALL) || (level[s2_x][s2_y] & BIT_BOX))
-			return FAILURE;
-		else {
+		if (!((level[s2_x][s2_y] & BIT_WALL) ||
+			(level[s2_x][s2_y] & BIT_BOX))) {
+
 			SET_BIT(level[s1_x][s1_y], BIT_PLAYER);
 			CLEAR_BIT(level[*x][*y], BIT_PLAYER);
 
 			SET_BIT(level[s2_x][s2_y], BIT_BOX);
 			CLEAR_BIT(level[s1_x][s1_y], BIT_BOX);
+		} else {
+			return FAILURE;
 		}
 	} else {
 		SET_BIT(level[s1_x][s1_y], BIT_PLAYER);
@@ -60,27 +62,28 @@ static int move(char level[][MAX_COLS], int *x, int *y, int sys_cmd)
 
 	*x = s1_x;
 	*y = s1_y;
-	
+
 	return MOVED;
 }
 
-static int check_placed(char level[][MAX_COLS], int rows, int cols)
+static int check_placed(char level[][MAX_COL], int rows, int cols)
 {
 	int i;
 	int j;
-	
+
 	for (i = 0; i < rows; i++)
 		for (j = 0; j < cols; j++)
-			if ((level[i][j] & BIT_BOX) && !(level[i][j] & BIT_TARGET))
+			if ((level[i][j] & BIT_BOX) &&
+				!(level[i][j] & BIT_TARGET))
 				return FAILURE;
-	
+
 	return SUCCESS;
 }
 
 int exec_cmd(game_data_t *data, int *redirect_key)
 {
 	*redirect_key = OUTPUT_END;
-	
+
 	int ret;
 	int player_x = data->player_pos >> NIBBLE;
 	int player_y = data->player_pos & NIBBLE_MASK;

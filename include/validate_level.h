@@ -3,6 +3,6 @@
 
 #include <sokoban.h>
 
-int validate_board(char[][MAX_COLS], int);
+int validate_board(char[][MAX_COL], int);
 
 #endif

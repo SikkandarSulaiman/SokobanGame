@@ -5,8 +5,8 @@
 #define SERVER_PORT 3000
 
 #define CMD_LEN_MAX 5
-#define MAX_ROWS 20
-#define MAX_COLS 20
+#define MAX_ROW 20
+#define MAX_COL 20
 #define INFO_MSG_LEN 100
 
 #define U_UP "w"
@@ -34,7 +34,7 @@ typedef struct {
 	int col_count;
 	int row_count;
 	char err_msg[INFO_MSG_LEN];
-	char level[MAX_ROWS][MAX_COLS];
+	char level[MAX_ROW][MAX_COL];
 } out_data_t;
 
 #endif

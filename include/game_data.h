@@ -39,7 +39,7 @@ typedef struct {
 	long next_level;
 	long current_level;
 	char user_cmd[CMD_LEN_MAX];
-	char level[MAX_ROWS][MAX_COLS];
+	char level[MAX_ROW][MAX_COL];
 } game_data_t;
 
 

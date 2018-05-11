@@ -3,7 +3,7 @@
 
 #include <game_data.h>
 
-static int check_board_field(char level[][MAX_COLS], int row_len)
+static int check_board_field(char level[][MAX_COL], int row_len)
 {
 	int player_pos = 0;
 	int player = 0;
@@ -16,7 +16,9 @@ static int check_board_field(char level[][MAX_COLS], int row_len)
 	for (row = 0; row < row_len; row++) {
 
 		for (col = 0; col < col_len; col++) {
-			if (level[row][col] == CHAR_PLAYER || level[row][col] == CHAR_P_ON_T) {
+			if ((level[row][col] == CHAR_PLAYER) ||
+				(level[row][col] == CHAR_P_ON_T)) {
+
 				if (level[row][col]  == CHAR_P_ON_T)
 					target++;
 				player++;
@@ -31,17 +33,17 @@ static int check_board_field(char level[][MAX_COLS], int row_len)
 
 	if (player != 1)
 		return ERR_NO_PLAYER;
-	
+
 	if (target != box)
 		return ERR_BOX_TARGET_COUNT;
-	
+
 	if (target == box && target == 0)
 		return ERR_NO_TARGET;
 
 	return SUCCESS;
 }
 
-static int check_row_order(char level[][MAX_COLS], int row_len)
+static int check_row_order(char level[][MAX_COL], int row_len)
 {
 	int row;
 	int col;
@@ -61,7 +63,7 @@ static int check_row_order(char level[][MAX_COLS], int row_len)
 	return SUCCESS;
 }
 
-static int check_column_order(char level[][MAX_COLS], int row_len)
+static int check_column_order(char level[][MAX_COL], int row_len)
 {
 	int row;
 	int col;
@@ -81,7 +83,7 @@ static int check_column_order(char level[][MAX_COLS], int row_len)
 	return SUCCESS;
 }
 
-static int check_reverse_row_order(char level[][MAX_COLS], int row_len)
+static int check_reverse_row_order(char level[][MAX_COL], int row_len)
 {
 	int row;
 	int col;
@@ -101,7 +103,7 @@ static int check_reverse_row_order(char level[][MAX_COLS], int row_len)
 	return SUCCESS;
 }
 
-static int check_reverse_column_order(char level[][MAX_COLS], int row_len)
+static int check_reverse_column_order(char level[][MAX_COL], int row_len)
 {
 	int row;
 	int col;
@@ -121,12 +123,12 @@ static int check_reverse_column_order(char level[][MAX_COLS], int row_len)
 	return SUCCESS;
 }
 
-int validate_board(char level[][MAX_COLS], int row_len)
+int validate_board(char level[][MAX_COL], int row_len)
 {
 	int i;
 	int ret;
 
-	int (*check[])(char[][MAX_COLS], int) = {
+	int (*check[])(char[][MAX_COL], int) = {
 		check_row_order,
 		check_column_order,
 		check_reverse_row_order,

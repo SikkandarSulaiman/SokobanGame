@@ -19,7 +19,7 @@ int process_input(game_data_t *data, int *redirect_key)
 		*redirect_key = OUTPUT_END;
 		return SUCCESS;
 	}
-	
+
 	if (data->sys_cmd & S_LEVEL_CMD) {
 
 		if (data->sys_cmd == S_QUIT) {
@@ -92,4 +92,3 @@ int match_cmd(char *user_cmd, int *sys_cmd)
 	*sys_cmd = sys_game_cmds[u_index];
 	return SUCCESS;
 }
-
