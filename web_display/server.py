@@ -23,12 +23,21 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             buf = s.recv(unpacker.size)
             buf = unpacker.unpack(buf)
 
+            print(buf)
+
+            level = ''
+
+            for i in range(0, 20 * buf[2], 20):
+                level += '"'
+                level += buf[4][i:i+buf[1]].decode('iso-8859-1')
+                level += '",'
             
+            level = level[:-1]
 
-            # s = '{"map": ["   ####  ","####  ## ","#   $  # ","#  *** # ","#  . . ##","## * *  #"," ##***  #","  # $ ###","  # @ #  ","  #####  "], "row": 10, "col": 9}\n'
-            s = '{"map": [' + buf[4].decode('iso-8859-1') + '], "row":' + str(buf[1]) + ', "col": ' + str(buf[2]) +'}\n'
+            s = '{"map": [' + level + '], "row":' + str(buf[2]) + ', "col": ' + str(buf[1]) +'}\n'
 
-            print(s)
+
+
 
             self.send_response(200)
             self.end_headers()
@@ -54,5 +63,5 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
 
 
-httpd = HTTPServer(('localhost', 8002), SimpleHTTPRequestHandler)
+httpd = HTTPServer(('localhost', 8001), SimpleHTTPRequestHandler)
 httpd.serve_forever()

@@ -1,4 +1,4 @@
-BIN_FILE_NAME = sokoban_engine.bin
+BIN_FILE_NAME = sokoban_engine
 
 inc_paths = -I $(INC_DIR)
 link_paths = -L .
@@ -26,5 +26,3 @@ clean:
 	rm -f $(ofiles)
 	rm -f display/display_ncurs
 
-display:
-	gcc display/*.c -o display/display_ncurs -I include/ -lncurses

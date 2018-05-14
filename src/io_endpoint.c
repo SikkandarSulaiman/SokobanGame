@@ -72,6 +72,8 @@ int respond(game_data_t *data, int *redirect_key)
 		printf("Invalid key pressed before Game start\n");
 	}
 
+	printf("%d row_count\n", data->row_count);
+
 	d_out.row_count = data->row_count;
 	d_out.col_count = data->col_count;
 	bits_to_chars(d_out.level, data->level, data->row_count, data->col_count);
@@ -87,6 +89,7 @@ int respond(game_data_t *data, int *redirect_key)
 	};
 
 	union ser s;
+	printf("%d row_count\n", d_out.row_count);
 
 	s.data = d_out;
 

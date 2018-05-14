@@ -1,6 +1,6 @@
 
-var heightZoom = 50
-var widthZoom = 50
+var heightZoom = 100
+var widthZoom = 100
 
 var gameArea = $('.game-area')
 
@@ -37,12 +37,12 @@ $('body').on('keydown', function(e) {
 
     $.get(cmd, function(data) {
     	var raw = data.split('\n')[0]
-    	console.log(raw)
     	jsonData = JSON.parse(raw)
 
     	var level = jsonData['map']
 	var row = jsonData['row']
 	var col = jsonData['col']
+
 
 	var width = col * widthZoom
 	var height = row * heightZoom
@@ -52,7 +52,9 @@ $('body').on('keydown', function(e) {
 
 	for (var i in level) {
 		for (var j in level[i]) {
-			tile = $('<div>').addClass('tile')
+		    tile = $('<div>').addClass('tile')
+		    
+		    	var shrink = false
 			var image = undefined
 			switch (level[i][j]) {
 			case '#':
@@ -62,19 +64,34 @@ $('body').on('keydown', function(e) {
 				image = playerImage
 				break
 			case '.':
+				shrink = true
 				image = targetImage
 				break
 			case '*':
+				shrink = true
 				image = placedImage
 				break
 			case '$':
+				shrink = true
 				image = boxImage
 				break
 			case '+':
 				image = shockImage
 				break
 			}
-			tile.css({'background-image': 'url("images/' + image + '")'})
+		    	tile.css({
+				'background-image': 'url("images/' + image + '")',
+			})
+		    	if (shrink === true)
+		    		tile.css({
+					'background-size': '50% 50%',
+					'background-repeat': 'no-repeat',
+					'background-position': '50%'		    			
+		    		})
+		    	else
+		    		tile.css({
+					'background-size': '100% 100%',		    			
+		    		})
 			tile.appendTo(gameArea)
 		}
 	}
@@ -93,7 +110,6 @@ $('body').on('keydown', function(e) {
 	$('.tile').css({
 		'height': heightZoom + 'px',
 		'width': widthZoom + 'px',
-		'background-size': '100% 100%',
 		'float': 'left'
 	})
 
