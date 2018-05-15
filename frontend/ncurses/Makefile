@@ -1,9 +1,9 @@
-BIN_FILE_NAME = sokoban_engine
+BIN_FILE_NAME = ncurses_display
 
 inc_paths = -I $(INC_DIR)
 link_paths = -L .
 
-DIRS_PATH = ./backend/sokoEngine/
+DIRS_PATH = ./
 
 INC_DIR = $(DIRS_PATH)include/
 SRC_DIR = $(DIRS_PATH)src/
@@ -16,7 +16,7 @@ ofiles = ${patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(cfiles)}
 binfile = $(BIN_DIR)$(BIN_FILE_NAME)
 
 CFLAGS = $(inc_paths)
-LIBFLAGS = $(link_paths)
+LIBFLAGS = $(link_paths) -lncurses
 
 .PHONY: clean
 
