@@ -96,8 +96,6 @@ $('body').on('keydown', function(e) {
 		}
 	}
 
-	tile.appendTo(gameArea)
-
 	gameArea.css({
 		'height': height + "px",
 		'width': width + "px",
