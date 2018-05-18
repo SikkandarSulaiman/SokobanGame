@@ -5,6 +5,11 @@ import os
 
 import socket
 
+
+SOKOBAN_SERVER_IP = '127.0.0.1'
+SOKOBAN_SERVER_PORT = 3000
+
+
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -13,12 +18,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
             cmd = self.path.split('=')[1]
 
-            unpacker = struct.Struct('I I I 100s 400s')
+            unpacker = struct.Struct('i i i 100s 400s')
             
 
 
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
-            s.connect(('127.0.0.1', 3000))
+            s.connect((SOKOBAN_SERVER_IP, SOKOBAN_SERVER_PORT))
             s.send(cmd.encode())
             buf = s.recv(unpacker.size)
             buf = unpacker.unpack(buf)
@@ -34,21 +39,20 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             
             level = level[:-1]
 
-            s = '{"map": [' + level + '], "row":' + str(buf[2]) + ', "col": ' + str(buf[1]) +'}\n'
-
-
-
+            jsonString = '{"map": [' + level + '], "row":' + str(buf[2]) + ', "col": ' + str(buf[1]) +'}\n'
 
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(s.encode())
+            self.wfile.write(jsonString.encode())
 
             return
 
         if self.path == '/':
-            filename = '.' + '/index.html'
+            filename = 'index.html'
         else:
-            filename = '.' + self.path
+            filename = self.path[1:]
+
+        filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), filename)
  
         self.send_response(200)
         self.end_headers()
@@ -59,8 +63,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(html)
 
         
-
-
 
 
 httpd = HTTPServer(('localhost', 8001), SimpleHTTPRequestHandler)

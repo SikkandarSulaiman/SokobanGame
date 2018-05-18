@@ -60,19 +60,17 @@ int respond(game_data_t *data, int *redirect_key)
 			printf("Error in map\n");
 		}
 	}
-	if (!(data->game_status & LEVEL_START) && data->err != ERR_NO_GAME) {
-		d_out.err_flag = 1;
-		strcpy(d_out.err_msg, "Level Completed");
-		printf("Level Completed\n");
-	}
 
 	if (data->err == ERR_NO_GAME) {
 		d_out.err_flag = 1;
-		strcpy(d_out.err_msg, "Press Start Game");
-		printf("Invalid key pressed before Game start\n");
+		if (!(data->game_status &  GAME_START)) {
+			strcpy(d_out.err_msg, "Start game to play");
+			printf("Invalid key pressed before Game start\n");
+		} else if (!(data->game_status & LEVEL_START)) {
+			strcpy(d_out.err_msg, "Level Completed");
+			printf("Level Completed\n");
+		}
 	}
-
-	printf("%d row_count\n", data->row_count);
 
 	d_out.row_count = data->row_count;
 	d_out.col_count = data->col_count;
@@ -86,11 +84,7 @@ int respond(game_data_t *data, int *redirect_key)
 	union ser {
 		out_data_t data;
 		char buf[sizeof(data)];
-	};
-
-	union ser s;
-	printf("%d row_count\n", d_out.row_count);
-
+	}s;
 	s.data = d_out;
 
 	write_to_sck(s.buf, sizeof(out_data_t));
@@ -129,9 +123,6 @@ static int read_from_sck(char *buf, int size)
 		error(1, errno, "unable to receive from client");
 	buf[rlen] = 0;
 
-/*	printf("Msg from %s: %s\n %d\n",
-		inet_ntoa(client.sin_addr), buf, client_len);
-*/
 	return SUCCESS;
 }
 

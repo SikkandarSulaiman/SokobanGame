@@ -4,7 +4,8 @@
 #include <sokoban.h>
 #include <game_data.h>
 
-#define LEVEL_FILE "level_files/100Boxes.txt"
+#define LEVEL_FILE_REL "../level_files/100Boxes.txt"
+#define DIR_SEP '/'
 
 /*
  *Prints Board

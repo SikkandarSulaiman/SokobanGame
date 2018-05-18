@@ -12,6 +12,7 @@
 #include <game_data.h>
 #include <bitfields_tr.h>
 
+#define FILE_NAME_BUF 100
 
 #define END_OF_FILE -1
 #define QUIT_LEVEL -2
@@ -126,16 +127,28 @@ int get_player_pos(char level[][MAX_COL], int rows, int cols)
 	return FAILURE;
 }
 
+static void get_level_filepath(char *path)
+{
+	getcwd(path);
+	*(strrchr(path, DIR_SEP) + 1) = 0;
+	strcat(path, __FILE__);
+	*(strrchr(path, DIR_SEP) + 1) = 0;
+	strcat(path, LEVEL_FILE_REL);
+}
+
 int get_board(game_data_t *data, int *redirect_key)
 {
 	char char_map[MAX_ROW][MAX_COL];
+	char level_file[FILE_NAME_BUF];
 	FILE *level_file_fd;
 	int row_count;
 	int ret;
 
 	*redirect_key = GAME_LOGIC;
 
-	level_file_fd = fopen(LEVEL_FILE, "r");
+	get_level_filepath(level_file);
+
+	level_file_fd = fopen(level_file, "r");
 	if (level_file_fd == NULL) {
 		*redirect_key = OUTPUT_END;
 		data->err = ERR_OPEN_LEVEL_FILE;
@@ -143,7 +156,6 @@ int get_board(game_data_t *data, int *redirect_key)
 	}
 
 	ret = set_level(level_file_fd, data);
-
 	ret = get_level(level_file_fd, char_map, &row_count);
 
 	data->next_level = ftell(level_file_fd);
@@ -151,7 +163,6 @@ int get_board(game_data_t *data, int *redirect_key)
 		error(1, errno, "Error getting next level");
 
 	if (ret == END_OF_FILE) {
-		printf("END OF GAME\n");
 		*redirect_key = OUTPUT_END;
 		data->err = ERR_GAME_FINISHED;
 		return FAILURE;
