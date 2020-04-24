@@ -7,7 +7,7 @@
 #include <game_logic.h>
 #include <game_data.h>
 
-#define CLEAR 0
+#define NO_ERROR 0
 
 int main(void)
 {
@@ -28,7 +28,7 @@ int main(void)
 
 	while (1) {
 		if (redirect_index == INPUT_END)
-			data.err = CLEAR;
+			data.err = NO_ERROR;
 
 		ret = blocks[redirect_index](&data, &redirect_index);
 		if (ret == FAILURE)
